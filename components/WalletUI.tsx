@@ -37,27 +37,35 @@ function StatCard({
 }
 
 export function WalletUI() {
-  const { openAuthModal } = useAuthModal();
+  const { openAuthModal, closeAuthModal } = useAuthModal();
   const { logout } = useLogout();
   const signerStatus = useSignerStatus();
   const user = useUser();
 
-  const { address } = useAccount({ type: "ModularAccountV2" });
+  // useAccount gives the smart account address (may be undefined pre-deployment)
+  const { address: smartAddress } = useAccount({ type: "ModularAccountV2" });
   const bundlerClient = useBundlerClient();
 
   const [balanceETH, setBalanceETH] = useState("—");
 
+  // Close the auth modal as soon as the user is authenticated
   useEffect(() => {
-    if (!address || !bundlerClient) return;
+    if (user) closeAuthModal();
+  }, [user, closeAuthModal]);
+
+  // Prefer the smart account address; fall back to the signer address
+  const displayAddr = (smartAddress ?? user?.address) as `0x${string}` | undefined;
+
+  useEffect(() => {
+    if (!displayAddr || !bundlerClient) return;
     bundlerClient
-      .getBalance({ address })
+      .getBalance({ address: displayAddr })
       .then((val) => {
         setBalanceETH(`${parseFloat(formatEther(val)).toFixed(4)} ETH`);
       })
       .catch(() => setBalanceETH("—"));
-  }, [address, bundlerClient]);
+  }, [displayAddr, bundlerClient]);
 
-  const displayAddr = address;
   const isLoading = signerStatus.isInitializing;
 
   if (isLoading) {
