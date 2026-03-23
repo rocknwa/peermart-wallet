@@ -13,10 +13,22 @@ function shortAddr(addr: string) {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 }
 
-function StatCard({ label, value, delay }: { label: string; value: string; delay: string }) {
+function StatCard({
+  label,
+  value,
+  delay,
+}: {
+  label: string;
+  value: string;
+  delay: string;
+}) {
   return (
-    <div className={`fade-up ${delay} rounded-2xl bg-white/5 border border-white/10 p-4 flex flex-col gap-1`}>
-      <span className="text-xs text-white/40 uppercase tracking-widest">{label}</span>
+    <div
+      className={`fade-up ${delay} rounded-2xl bg-white/5 border border-white/10 p-4 flex flex-col gap-1`}
+    >
+      <span className="text-xs text-white/40 uppercase tracking-widest">
+        {label}
+      </span>
       <span className="text-lg font-semibold truncate">{value}</span>
     </div>
   );
@@ -28,12 +40,11 @@ export function WalletUI() {
   const signerStatus = useSignerStatus();
   const user = useUser();
 
-  // These give us the real EOA address + balance for external wallets
   const { address, isConnected } = useAccount();
   const { data: balanceData } = useBalance({ address });
 
   const isLoading = signerStatus.isInitializing;
-  const displayAddr = address ?? user?.address;
+  const displayAddr = address ?? (user?.address as `0x${string}` | undefined);
   const balanceETH = balanceData
     ? `${parseFloat(formatEther(balanceData.value)).toFixed(4)} ${balanceData.symbol}`
     : "—";
@@ -59,19 +70,31 @@ export function WalletUI() {
 
         <div className="fade-up relative mb-8 flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-2xl shadow-indigo-500/30">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-              stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path
+              d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </div>
 
-        <h1 className="fade-up delay-1 text-3xl font-bold tracking-tight text-center mb-2">SocialWallet</h1>
+        <h1 className="fade-up delay-1 text-3xl font-bold tracking-tight text-center mb-2">
+          SocialWallet
+        </h1>
         <p className="fade-up delay-2 text-white/50 text-center text-sm mb-10 max-w-xs leading-relaxed">
           Sign in with Google, Apple, email, or your existing wallet.
         </p>
 
         <div className="fade-up delay-3 flex flex-wrap justify-center gap-2 mb-10">
           {["⚡ Gasless txns", "🔐 Social login", "📱 Mobile-first", "🔗 WalletConnect"].map((f) => (
-            <span key={f} className="text-xs px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/60">{f}</span>
+            <span
+              key={f}
+              className="text-xs px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-white/60"
+            >
+              {f}
+            </span>
           ))}
         </div>
 
@@ -81,6 +104,7 @@ export function WalletUI() {
         >
           Get Started
         </button>
+
         <p className="fade-up delay-4 mt-6 text-xs text-white/25 text-center">
           Powered by Alchemy Account Kit · ERC-4337
         </p>
@@ -90,7 +114,6 @@ export function WalletUI() {
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] px-4 py-8 max-w-md mx-auto">
-      {/* Header */}
       <div className="fade-up flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-sm font-bold">
@@ -114,9 +137,10 @@ export function WalletUI() {
         </button>
       </div>
 
-      {/* Address card */}
       <div className="fade-up delay-1 rounded-3xl bg-gradient-to-br from-indigo-600/40 to-violet-700/40 border border-indigo-500/20 p-5 mb-6 shadow-xl shadow-indigo-900/20">
-        <p className="text-xs text-indigo-300/60 uppercase tracking-widest mb-1">Wallet Address</p>
+        <p className="text-xs text-indigo-300/60 uppercase tracking-widest mb-1">
+          Wallet Address
+        </p>
         <p className="font-mono text-sm break-all leading-relaxed">
           {displayAddr ?? "—"}
         </p>
@@ -130,15 +154,17 @@ export function WalletUI() {
         )}
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-2 gap-3 mb-8">
         <StatCard label="Balance" value={balanceETH} delay="delay-2" />
         <StatCard label="Network" value="Sepolia" delay="delay-2" />
-        <StatCard label="Auth" value={user?.email ? "Email/Social" : "External Wallet"} delay="delay-3" />
+        <StatCard
+          label="Auth"
+          value={user?.email ? "Email / Social" : "External Wallet"}
+          delay="delay-3"
+        />
         <StatCard label="Status" value="Connected ✓" delay="delay-3" />
       </div>
 
-      {/* Etherscan link */}
       {displayAddr && (
         
           href={`https://sepolia.etherscan.io/address/${displayAddr}`}
