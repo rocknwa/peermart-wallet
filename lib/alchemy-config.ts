@@ -30,7 +30,7 @@ export const config = createConfig(
     transport: alchemy({ apiKey: ALCHEMY_API_KEY }),
     chain: sepolia,
     ssr: true,
-    enablePopupOauth: true,
+    enablePopupOauth: false,
     policyId: process.env.NEXT_PUBLIC_ALCHEMY_POLICY_ID,  // ← add this
   },
   uiConfig
