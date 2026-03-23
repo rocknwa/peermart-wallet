@@ -166,7 +166,7 @@ export function WalletUI() {
       </div>
 
       {displayAddr && (
-        
+        <a
           href={`https://sepolia.etherscan.io/address/${displayAddr}`}
           target="_blank"
           rel="noreferrer"
