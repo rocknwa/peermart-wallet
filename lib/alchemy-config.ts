@@ -29,8 +29,9 @@ export const config = createConfig(
   {
     transport: alchemy({ apiKey: ALCHEMY_API_KEY }),
     chain: sepolia,
-    ssr: true, // required for Next.js
+    ssr: true,
     enablePopupOauth: true,
+    policyId: process.env.NEXT_PUBLIC_ALCHEMY_POLICY_ID,  // ← add this
   },
   uiConfig
 );
