@@ -6,7 +6,7 @@ import {
   useSignerStatus,
   useUser,
 } from "@account-kit/react";
-import { useAccount, useBalance } from "wagmi";
+import { useAccount, useBalance } from "@account-kit/react";
 import { formatEther } from "viem";
 
 function shortAddr(addr: string) {
