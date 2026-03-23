@@ -5,8 +5,10 @@ import {
   useLogout,
   useSignerStatus,
   useUser,
+  useAccount,
+  useBundlerClient,
 } from "@account-kit/react";
-import { useAccount, useBalance } from "@account-kit/react";
+import { useEffect, useState } from "react";
 import { formatEther } from "viem";
 
 function shortAddr(addr: string) {
@@ -40,14 +42,23 @@ export function WalletUI() {
   const signerStatus = useSignerStatus();
   const user = useUser();
 
-  const { address, isConnected } = useAccount();
-  const { data: balanceData } = useBalance({ address });
+  const { address } = useAccount({ type: "ModularAccountV2" });
+  const bundlerClient = useBundlerClient();
 
+  const [balanceETH, setBalanceETH] = useState("—");
+
+  useEffect(() => {
+    if (!address || !bundlerClient) return;
+    bundlerClient
+      .getBalance({ address })
+      .then((val) => {
+        setBalanceETH(`${parseFloat(formatEther(val)).toFixed(4)} ETH`);
+      })
+      .catch(() => setBalanceETH("—"));
+  }, [address, bundlerClient]);
+
+  const displayAddr = address;
   const isLoading = signerStatus.isInitializing;
-  const displayAddr = address ?? (user?.address as `0x${string}` | undefined);
-  const balanceETH = balanceData
-    ? `${parseFloat(formatEther(balanceData.value)).toFixed(4)} ${balanceData.symbol}`
-    : "—";
 
   if (isLoading) {
     return (
@@ -60,7 +71,7 @@ export function WalletUI() {
     );
   }
 
-  if (!user && !isConnected) {
+  if (!user) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-6 bg-[#0a0a0a] overflow-hidden relative">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
