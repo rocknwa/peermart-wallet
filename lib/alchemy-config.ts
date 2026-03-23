@@ -16,12 +16,17 @@ export const config = createConfig(
     chain: sepolia,
     ssr: true,
     storage: cookieStorage,
+    enablePopupOauth: true,
     connectors: externalWalletsConfig.connectors,
   },
   {
     auth: {
       sections: [
-        // WalletConnect + MetaMask row — no dashboard config needed
+        [{ type: "email" }],
+        [
+          { type: "social", authProviderId: "google", mode: "popup" },
+          { type: "social", authProviderId: "apple", mode: "popup" },
+        ],
         [{ type: "external_wallets", ...externalWalletsConfig.uiConfig }],
       ],
       addPasskeyOnSignup: false,
